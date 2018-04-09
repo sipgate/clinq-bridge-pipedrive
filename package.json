@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "clinq-crm-bridge": "^3.0.5",
-    "pipedrive": "^3.2.0"
+    "pipedrive": "^3.0.2"
   },
   "engines": {
     "node": "8.9.4",

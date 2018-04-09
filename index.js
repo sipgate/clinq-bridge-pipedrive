@@ -3,7 +3,7 @@ const PipedriveClinq = require("./clinq-pipedrive-adapter");
 
 const adapter = {
 	getContacts: async ({ apiKey, apiUrl }) => {
-        return PipedriveClinq.getContactList(apiKey)
+        	return PipedriveClinq.getContactList(apiKey)
 	}
 };
 

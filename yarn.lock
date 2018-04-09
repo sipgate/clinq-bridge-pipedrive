@@ -247,13 +247,9 @@ mime-types@~2.1.16, mime-types@~2.1.18:
   dependencies:
     mime-db "~1.33.0"
 
-mime@1.4.1:
+mime@1.4.1, mime@~1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.4.1.tgz#121f9ebc49e3766f311a76e1fa1c8003c4b03aa6"
-
-mime@~1.2.11:
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.11.tgz#58203eed86e3a5ef17aed2b7d9ebd47f0a60dd10"
 
 ms@2.0.0:
   version "2.0.0"
@@ -283,14 +279,14 @@ path-to-regexp@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-0.1.7.tgz#df604178005f522f15eb4490e7247a1bfaa67f8c"
 
-pipedrive@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/pipedrive/-/pipedrive-3.0.2.tgz#f5fc759c8a132ac98ff1ec04e07bcbe9691ff47e"
+pipedrive@^3.2.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/pipedrive/-/pipedrive-5.0.0.tgz#7ebf82be833249a547239b4809771d20f72fa4ac"
   dependencies:
     async "~0.9.0"
     fetch "~0.3.6"
     lodash "~2.4.1"
-    mime "~1.2.11"
+    mime "~1.4.1"
     qs "~2.1.0"
     sockjs-client "^1.0.3"
 

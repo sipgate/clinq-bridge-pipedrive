@@ -66,6 +66,7 @@ var clearCache = (key) => {
 }
 
 exports.getContactList = async function(key) {
+    console.log("Requesting Key: "+keyOut(key))
     if (cached_keys.includes(key)) {
         console.log("Responding from cache: "+keyOut(key)+" ("+cache[key].length+" contacts)")
         return cache[key]

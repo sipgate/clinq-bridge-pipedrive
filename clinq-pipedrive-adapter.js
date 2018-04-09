@@ -69,6 +69,10 @@ exports.getContactList = async function(key) {
     console.log("Requesting Key: "+keyOut(key))
     if (cached_keys.includes(key)) {
         console.log("Responding from cache: "+keyOut(key)+" ("+cache[key].length+" contacts)")
+        loadList(key).then((apiResponse) => {
+            console.log("Filled cache: "+keyOut(key)+" ("+apiResponse.length+" contacts)")
+            cache[key] = apiResponse
+        })
         return cache[key]
     }
     console.log("Preparing empty cache: "+keyOut(key))

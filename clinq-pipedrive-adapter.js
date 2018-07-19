@@ -1,11 +1,10 @@
 const Pipedrive = require('pipedrive');
 const HARD_MAX = 40000;
-const apiKey = null;
 const cache = [];
 const cached_keys = [];
 
 const formatNumber = (number) => {
-	const p = number.replace(/[^0-9\+]/ig, "");
+	let p = number.replace(/[^0-9+]/ig, "");
 	p = p.replace(/^00/, "");
 	p = p.replace(/^\+/, "");
 	p = "+" + p.replace(/^0/, "49");
@@ -25,7 +24,7 @@ const mapResult = (input) => {
 			};
 			mapped.phoneNumbers = [];
 			contact.phone.forEach(function (numberinfo) {
-				if (numberinfo.value != "") {
+				if (numberinfo.value && numberinfo.value !== "") {
 					mapped.phoneNumbers.push(
 						{"label": numberinfo.label, "phoneNumber": formatNumber(numberinfo.value)})
 				}
@@ -40,7 +39,7 @@ const mapResult = (input) => {
 };
 
 const getAllPromise = (client, params) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		client.Persons.getAll(params, function (error, data, additional) {
 			resolve({"contacts": data, "info": additional})
 		})
@@ -64,10 +63,6 @@ const loadPage = async (offset, cache, client) => {
 const loadList = async (key) => {
 	pipedriveClient = new Pipedrive.Client(key, {strictMode: true});
 	return loadPage(0, [], pipedriveClient)
-};
-
-const clearCache = (key) => {
-	cache[key] = null
 };
 
 exports.getContactList = async function (key) {

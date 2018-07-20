@@ -9,9 +9,5 @@
   "dependencies": {
     "@clinq/bridge": "^3.0.0",
     "pipedrive": "^3.0.2"
-  },
-  "engines": {
-    "node": ">=8",
-    "yarn": ">=1.5"
   }
 }

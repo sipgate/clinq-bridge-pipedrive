@@ -15,7 +15,7 @@ const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const mapResult = contacts =>
+const mapResult = (contacts, companyIdentifier) =>
   contacts
     .filter(contact => contact.name)
     .filter(contact => contact.phone.length > 0)
@@ -24,6 +24,8 @@ const mapResult = contacts =>
       name: contact.name,
       company: contact.org_name || null,
       email: contact.email.length > 0 ? contact.email[0].value : null,
+      contactUrl: companyIdentifier ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}` : null,
+      avatarUrl: null,
       phoneNumbers: contact.phone
         .filter(phoneNumber => phoneNumber.value)
         .map(phoneNumber => ({
@@ -42,13 +44,13 @@ const getAll = async (client, params) => {
   });
 };
 
-const loadPage = async (offset, cache, client) => {
+const loadPage = async (offset, cache, client, companyIdentifier) => {
   const options = {
     start: offset,
     limit: 100
   };
   return getAll(client, options).then(data => {
-    const mapped = mapResult(data.contacts).concat(cache);
+    const mapped = mapResult(data.contacts, companyIdentifier).concat(cache);
     if (
       data.info["pagination"]["more_items_in_collection"] &&
       mapped.length <= HARD_MAX
@@ -62,6 +64,15 @@ const loadPage = async (offset, cache, client) => {
   });
 };
 
+const getCompanyIdentifier = async (client) => {
+  const user = await promisify(client.Users.get)('self');
+  if (!(user.companies && user.company_id)) {
+    return null;
+  }
+  const company = user.companies[user.company_id];
+  return company && company.identifier || null;
+};
+
 exports.getContactList = async function(key) {
   const client = new Pipedrive.Client(key, { strictMode: true });
 
@@ -72,7 +83,8 @@ exports.getContactList = async function(key) {
     throw new Error("Unauthorized");
   }
 
-  loadPage(0, [], client).then(response => {
+  const companyIdentifier = await getCompanyIdentifier(client);
+  loadPage(0, [], client, companyIdentifier).then(response => {
     cache[key] = response;
   });
 

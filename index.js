@@ -4,7 +4,7 @@ const PipedriveClinq = require("./clinq-pipedrive-adapter");
 const adapter = {
 	getContacts: async ({ apiKey }) => {
 		if (!apiKey) {
-			throw new Error("Unauthorized");
+			Clinq.unauthorized();
 		}
 		return PipedriveClinq.getContactList(apiKey)
 	}

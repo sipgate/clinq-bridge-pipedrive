@@ -1,13 +1,14 @@
 {
   "name": "clinq-bridge-pipedrive",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@clinq/bridge": "^4.0.0",
+    "@clinq/bridge": "^5.1.1",
     "pipedrive": "^3.0.2"
   }
 }

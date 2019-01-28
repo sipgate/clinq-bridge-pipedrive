@@ -1,7 +1,12 @@
+const { ServerError } = require("@clinq/bridge");
 const { promisify } = require("util");
 const Pipedrive = require("pipedrive");
 const HARD_MAX = 40000;
 const cache = [];
+
+function anonymizeKey(apiKey) {
+  return `*****${apiKey.substr(apiKey.length - 5)}`;
+}
 
 const formatNumber = number => {
   let p = number.replace(/[^0-9+]/gi, "");
@@ -19,22 +24,7 @@ const mapResult = (contacts, companyIdentifier) =>
   contacts
     .filter(contact => contact.name)
     .filter(contact => contact.phone.length > 0)
-    .map(contact => ({
-      id: String(contact.id),
-      name: contact.name,
-      company: contact.org_name || null,
-      email: contact.email.length > 0 ? contact.email[0].value : null,
-      contactUrl: companyIdentifier ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}` : null,
-      avatarUrl: null,
-      phoneNumbers: contact.phone
-        .filter(phoneNumber => phoneNumber.value)
-        .map(phoneNumber => ({
-          label: phoneNumber.label
-            ? capitalizeFirstLetter(phoneNumber.label)
-            : null,
-          phoneNumber: formatNumber(phoneNumber.value)
-        }))
-    }));
+    .map(contact => convertFromPipedriveContact(contact, companyIdentifier));
 
 const getAll = async (client, params) => {
   return new Promise(resolve => {
@@ -64,29 +54,81 @@ const loadPage = async (offset, cache, client, companyIdentifier) => {
   });
 };
 
-const getCompanyIdentifier = async (client) => {
-  const user = await promisify(client.Users.get)('self');
+const getCompanyIdentifier = async client => {
+  const user = await promisify(client.Users.get)("self");
   if (!(user.companies && user.company_id)) {
     return null;
   }
   const company = user.companies[user.company_id];
-  return company && company.identifier || null;
+  return (company && company.identifier) || null;
 };
 
-exports.getContactList = async function(key) {
-  const client = new Pipedrive.Client(key, { strictMode: true });
+function convertToPipedriveContact(contact) {
+  return {
+    name: contact.name,
+    email: contact.email ? contact.email : null,
+    phone: contact.phoneNumbers.map(phoneNumber => ({
+      label: phoneNumber.label ? phoneNumber.label : "Other",
+      value: phoneNumber.phoneNumber
+    }))
+  };
+}
+
+function convertFromPipedriveContact(contact, companyIdentifier) {
+  return {
+    id: String(contact.id),
+    name: contact.name,
+    company: contact.org_name || null,
+    email: contact.email.length > 0 ? contact.email[0].value : null,
+    contactUrl: companyIdentifier
+      ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}`
+      : null,
+    avatarUrl: null,
+    phoneNumbers: contact.phone
+      .filter(phoneNumber => phoneNumber.value)
+      .map(phoneNumber => ({
+        label: phoneNumber.label
+          ? capitalizeFirstLetter(phoneNumber.label)
+          : null,
+        phoneNumber: formatNumber(phoneNumber.value)
+      }))
+  };
+}
+
+async function getContactList(apiKey) {
+  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const anonymizedKey = anonymizeKey(apiKey);
 
   try {
     await promisify(client.Currencies.getAll)();
   } catch (error) {
-    console.error(error);
-    throw new Error("Unauthorized");
+    console.log(`Unautherized for ${anonymizedKey}`);
+    throw new ServerError(401, "Unautherized");
   }
 
   const companyIdentifier = await getCompanyIdentifier(client);
   loadPage(0, [], client, companyIdentifier).then(response => {
-    cache[key] = response;
+    cache[apiKey] = response;
   });
 
-  return cache[key] || [];
-};
+  return cache[apiKey] || [];
+}
+
+async function createContact(apiKey, contact) {
+  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const companyIdentifier = await getCompanyIdentifier(client);
+
+  const anonymizedKey = anonymizeKey(apiKey);
+  try {
+    await promisify(client.Currencies.getAll)();
+  } catch (error) {
+    console.log(`Unautherized for ${anonymizedKey}`);
+    throw new ServerError(401, "Unauthorized");
+  }
+  const convertedContact = convertToPipedriveContact(contact);
+  const response = await promisify(client.Persons.add)(convertedContact);
+
+  return convertFromPipedriveContact(response, companyIdentifier);
+}
+
+module.exports = { getContactList, createContact };

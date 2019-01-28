@@ -131,4 +131,37 @@ async function createContact(apiKey, contact) {
   return convertFromPipedriveContact(response, companyIdentifier);
 }
 
-module.exports = { getContactList, createContact };
+async function updateContact(apiKey, id, contact) {
+  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const companyIdentifier = await getCompanyIdentifier(client);
+  const anonymizedKey = anonymizeKey(apiKey);
+  try {
+    await promisify(client.Currencies.getAll)();
+  } catch (error) {
+    console.log(`Unautherized for ${anonymizedKey}`);
+    throw new ServerError(401, "Unauthorized");
+  }
+  const convertedContact = convertToPipedriveContact(contact);
+  const response = await promisify(client.Persons.update)(id, convertedContact);
+
+  return convertFromPipedriveContact(response, companyIdentifier);
+}
+
+async function deleteContact(apiKey, id) {
+  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const anonymizedKey = anonymizeKey(apiKey);
+  try {
+    await promisify(client.Currencies.getAll)();
+  } catch (error) {
+    console.log(`Unautherized for ${anonymizedKey}`);
+    throw new ServerError(401, "Unauthorized");
+  }
+  const response = await promisify(client.Persons.remove)(id);
+}
+
+module.exports = {
+  getContactList,
+  createContact,
+  updateContact,
+  deleteContact
+};

@@ -1,4 +1,4 @@
-const { ServerError } = require("@clinq/bridge");
+const { ServerError, PhoneNumberLabel } = require("@clinq/bridge");
 const { promisify } = require("util");
 const Pipedrive = require("pipedrive");
 const HARD_MAX = 40000;
@@ -14,10 +14,6 @@ const formatNumber = number => {
   p = p.replace(/^\+/, "");
   p = "+" + p.replace(/^0/, "49");
   return p;
-};
-
-const capitalizeFirstLetter = string => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 const mapResult = (contacts, companyIdentifier) =>
@@ -68,7 +64,7 @@ function convertToPipedriveContact(contact) {
     name: contact.name,
     email: contact.email ? contact.email : null,
     phone: contact.phoneNumbers.map(phoneNumber => ({
-      label: phoneNumber.label ? phoneNumber.label : "Other",
+      label: parseToPipedriveLabel(phoneNumber.label),
       value: phoneNumber.phoneNumber
     }))
   };
@@ -78,7 +74,9 @@ function convertFromPipedriveContact(contact, companyIdentifier) {
   return {
     id: String(contact.id),
     name: contact.name,
-    company: contact.org_name || null,
+    firstName: null,
+    lastName: null,
+    organization: contact.org_name || null,
     email: contact.email.length > 0 ? contact.email[0].value : null,
     contactUrl: companyIdentifier
       ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}`
@@ -88,11 +86,37 @@ function convertFromPipedriveContact(contact, companyIdentifier) {
       .filter(phoneNumber => phoneNumber.value)
       .map(phoneNumber => ({
         label: phoneNumber.label
-          ? capitalizeFirstLetter(phoneNumber.label)
+          ? parseFromPipedriveLabel(phoneNumber.label)
           : null,
         phoneNumber: formatNumber(phoneNumber.value)
       }))
   };
+}
+
+function parseFromPipedriveLabel(label) {
+  switch (label.toLowerCase()) {
+    case "work":
+      return PhoneNumberLabel.WORK;
+    case "home":
+      return PhoneNumberLabel.HOME;
+    case "mobile":
+      return PhoneNumberLabel.MOBILE;
+    default:
+      return PhoneNumberLabel.WORK;
+  }
+}
+
+function parseToPipedriveLabel(label) {
+  switch (label) {
+    case PhoneNumberLabel.WORK:
+      return "Work";
+    case PhoneNumberLabel.HOME:
+      return "Home";
+    case PhoneNumberLabel.MOBILE:
+      return "Mobile";
+    default:
+      return "Other";
+  }
 }
 
 async function getContactList(apiKey) {
@@ -102,8 +126,8 @@ async function getContactList(apiKey) {
   try {
     await promisify(client.Currencies.getAll)();
   } catch (error) {
-    console.log(`Unautherized for ${anonymizedKey}`);
-    throw new ServerError(401, "Unautherized");
+    console.log(`Unauthorized for ${anonymizedKey}`);
+    throw new ServerError(401, "Unauthorized");
   }
 
   const companyIdentifier = await getCompanyIdentifier(client);
@@ -122,7 +146,7 @@ async function createContact(apiKey, contact) {
   try {
     await promisify(client.Currencies.getAll)();
   } catch (error) {
-    console.log(`Unautherized for ${anonymizedKey}`);
+    console.log(`Unauthorized for ${anonymizedKey}`);
     throw new ServerError(401, "Unauthorized");
   }
   const convertedContact = convertToPipedriveContact(contact);
@@ -138,7 +162,7 @@ async function updateContact(apiKey, id, contact) {
   try {
     await promisify(client.Currencies.getAll)();
   } catch (error) {
-    console.log(`Unautherized for ${anonymizedKey}`);
+    console.log(`Unauthorized for ${anonymizedKey}`);
     throw new ServerError(401, "Unauthorized");
   }
   const convertedContact = convertToPipedriveContact(contact);
@@ -153,7 +177,7 @@ async function deleteContact(apiKey, id) {
   try {
     await promisify(client.Currencies.getAll)();
   } catch (error) {
-    console.log(`Unautherized for ${anonymizedKey}`);
+    console.log(`Unauthorized for ${anonymizedKey}`);
     throw new ServerError(401, "Unauthorized");
   }
   const response = await promisify(client.Persons.remove)(id);

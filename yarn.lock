@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@clinq/bridge@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-7.2.0.tgz#ac64ab5c2dd62c9e6eca318a24646219a3d688c2"
-  integrity sha512-C1ZLGAInVvwtPjb5dephp5qulkKq6R/zxxUlms18oqECqwy4BvwXyoNQxHNDbNFq5er3SkFPW5QNDNOigSqcwg==
+"@clinq/bridge@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-7.2.2.tgz#80111a85c4b951597e8479db4ef6548a0cda89d8"
+  integrity sha512-ZhHG3kKzaWGd/R9h2uW3odHZTgg+c6TFlxZ1/WrsJncTjCyt/YI1RCHTIhoLOBjX+33kUV9u2i3xjgmA9fn9mQ==
   dependencies:
     "@types/google-libphonenumber" "^7.4.17"
     ajv "^6.1.1"

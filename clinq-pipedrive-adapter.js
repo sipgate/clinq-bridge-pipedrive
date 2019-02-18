@@ -1,8 +1,12 @@
-const { ServerError, PhoneNumberLabel } = require("@clinq/bridge");
-const { promisify } = require("util");
+const {
+  ServerError,
+  PhoneNumberLabel
+} = require("@clinq/bridge");
+const {
+  promisify
+} = require("util");
 const Pipedrive = require("pipedrive");
 const HARD_MAX = 40000;
-const cache = [];
 
 function anonymizeKey(apiKey) {
   return `*****${apiKey.substr(apiKey.length - 5)}`;
@@ -18,25 +22,28 @@ const formatNumber = number => {
 
 const mapResult = (contacts, companyIdentifier) =>
   contacts
-    .filter(contact => contact.name)
-    .filter(contact => contact.phone.length > 0)
-    .map(contact => convertFromPipedriveContact(contact, companyIdentifier));
+  .filter(contact => contact.name)
+  .filter(contact => contact.phone.length > 0)
+  .map(contact => convertFromPipedriveContact(contact, companyIdentifier));
 
 const getAll = async (client, params) => {
   return new Promise(resolve => {
-    client.Persons.getAll(params, function(error, data, additional) {
-      resolve({ contacts: data, info: additional });
+    client.Persons.getAll(params, function (error, data, additional) {
+      resolve({
+        contacts: data,
+        info: additional
+      });
     });
   });
 };
 
-const loadPage = async (offset, cache, client, companyIdentifier) => {
+const loadPage = async (offset, accumulator, client, companyIdentifier) => {
   const options = {
     start: offset,
     limit: 100
   };
   return getAll(client, options).then(data => {
-    const mapped = mapResult(data.contacts, companyIdentifier).concat(cache);
+    const mapped = mapResult(data.contacts, companyIdentifier).concat(accumulator);
     if (
       data.info["pagination"]["more_items_in_collection"] &&
       mapped.length <= HARD_MAX
@@ -78,16 +85,14 @@ function convertFromPipedriveContact(contact, companyIdentifier) {
     lastName: null,
     organization: contact.org_name || null,
     email: contact.email.length > 0 ? contact.email[0].value : null,
-    contactUrl: companyIdentifier
-      ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}`
-      : null,
+    contactUrl: companyIdentifier ?
+      `https://${companyIdentifier}.pipedrive.com/person/${contact.id}` : null,
     avatarUrl: null,
     phoneNumbers: contact.phone
       .filter(phoneNumber => phoneNumber.value)
       .map(phoneNumber => ({
-        label: phoneNumber.label
-          ? parseFromPipedriveLabel(phoneNumber.label)
-          : null,
+        label: phoneNumber.label ?
+          parseFromPipedriveLabel(phoneNumber.label) : null,
         phoneNumber: formatNumber(phoneNumber.value)
       }))
   };
@@ -120,7 +125,9 @@ function parseToPipedriveLabel(label) {
 }
 
 async function getContactList(apiKey) {
-  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const client = new Pipedrive.Client(apiKey, {
+    strictMode: true
+  });
   const anonymizedKey = anonymizeKey(apiKey);
 
   try {
@@ -131,15 +138,13 @@ async function getContactList(apiKey) {
   }
 
   const companyIdentifier = await getCompanyIdentifier(client);
-  loadPage(0, [], client, companyIdentifier).then(response => {
-    cache[apiKey] = response;
-  });
-
-  return cache[apiKey] || [];
+  return await loadPage(0, [], client, companyIdentifier);
 }
 
 async function createContact(apiKey, contact) {
-  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const client = new Pipedrive.Client(apiKey, {
+    strictMode: true
+  });
   const companyIdentifier = await getCompanyIdentifier(client);
 
   const anonymizedKey = anonymizeKey(apiKey);
@@ -156,7 +161,9 @@ async function createContact(apiKey, contact) {
 }
 
 async function updateContact(apiKey, id, contact) {
-  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const client = new Pipedrive.Client(apiKey, {
+    strictMode: true
+  });
   const companyIdentifier = await getCompanyIdentifier(client);
   const anonymizedKey = anonymizeKey(apiKey);
   try {
@@ -172,7 +179,9 @@ async function updateContact(apiKey, id, contact) {
 }
 
 async function deleteContact(apiKey, id) {
-  const client = new Pipedrive.Client(apiKey, { strictMode: true });
+  const client = new Pipedrive.Client(apiKey, {
+    strictMode: true
+  });
   const anonymizedKey = anonymizeKey(apiKey);
   try {
     await promisify(client.Currencies.getAll)();

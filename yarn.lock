@@ -2,17 +2,25 @@
 # yarn lockfile v1
 
 
-"@clinq/bridge@^7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-7.0.2.tgz#a0b322fb9febb91167db76fd8f7b90dbf42bd508"
-  integrity sha512-GBWloju3u8zgLB1otnjKw+GhhOvBbxmMTQJtHG+jSlhGrdbxK7sDErgTI2QF3nCvyS3mRUiAiDbEXwuTnXcDYg==
+"@clinq/bridge@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-7.2.0.tgz#ac64ab5c2dd62c9e6eca318a24646219a3d688c2"
+  integrity sha512-C1ZLGAInVvwtPjb5dephp5qulkKq6R/zxxUlms18oqECqwy4BvwXyoNQxHNDbNFq5er3SkFPW5QNDNOigSqcwg==
   dependencies:
+    "@types/google-libphonenumber" "^7.4.17"
     ajv "^6.1.1"
     axios "^0.18.0"
     body-parser "^1.18.3"
     cookie-parser "^1.4.3"
     cors "^2.8.4"
     express "^4.16.2"
+    google-libphonenumber "^3.2.2"
+    redis "^2.8.0"
+
+"@types/google-libphonenumber@^7.4.17":
+  version "7.4.17"
+  resolved "https://registry.yarnpkg.com/@types/google-libphonenumber/-/google-libphonenumber-7.4.17.tgz#26974213353cb459e403a5740812115a596cf170"
+  integrity sha512-NdqFHXBGxwiGjJn7dTAjcCckgxE+LbE3jik6/SNiC9ZfG4BxHJM1X6m8w+/ZpSGRN5s0+4dIL+MaD/KSXywp1g==
 
 abbrev@1:
   version "1.1.1"
@@ -494,6 +502,11 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
+double-ended-queue@^2.1.0-0:
+  version "2.1.0-0"
+  resolved "https://registry.yarnpkg.com/double-ended-queue/-/double-ended-queue-2.1.0-0.tgz#103d3527fd31528f40188130c841efdd78264e5c"
+  integrity sha1-ED01J/0xUo9AGIEwyEHv3XgmTlw=
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -775,6 +788,11 @@ global-dirs@^0.1.0:
   integrity sha1-sxnA3UYH81PzvpzKTHL8FIxJ9EU=
   dependencies:
     ini "^1.3.4"
+
+google-libphonenumber@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/google-libphonenumber/-/google-libphonenumber-3.2.2.tgz#3d9d7ba727e99a50812f21b0ed313723b76c5c54"
+  integrity sha512-ubjGeosYPeusjYbUHy76lCniGTTI0k1rIFc+uKBX+jHQLDmWOSUtlFUxaeoLJ+Y+PAMM6dWp+C1HjHx5BI8kEw==
 
 got@^6.7.1:
   version "6.7.1"
@@ -1651,6 +1669,25 @@ readdirp@^2.0.0:
     graceful-fs "^4.1.11"
     micromatch "^3.1.10"
     readable-stream "^2.0.2"
+
+redis-commands@^1.2.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
+  integrity sha512-cu8EF+MtkwI4DLIT0x9P8qNTLFhQD4jLfxLR0cCNkeGzs87FN6879JOJwNQR/1zD7aSYNbU0hgsV9zGY71Itvw==
+
+redis-parser@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-2.6.0.tgz#52ed09dacac108f1a631c07e9b69941e7a19504b"
+  integrity sha1-Uu0J2srBCPGmMcB+m2mUHnoZUEs=
+
+redis@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-2.8.0.tgz#202288e3f58c49f6079d97af7a10e1303ae14b02"
+  integrity sha512-M1OkonEQwtRmZv4tEWF2VgpG0JWJ8Fv1PhlgT5+B+uNq2cA3Rt1Yt/ryoR+vQNOQcIEgdCdfH0jr3bDpihAw1A==
+  dependencies:
+    double-ended-queue "^2.1.0-0"
+    redis-commands "^1.2.0"
+    redis-parser "^2.6.0"
 
 regex-not@^1.0.0, regex-not@^1.0.2:
   version "1.0.2"

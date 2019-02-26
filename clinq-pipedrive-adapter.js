@@ -1,10 +1,5 @@
-const {
-  ServerError,
-  PhoneNumberLabel
-} = require("@clinq/bridge");
-const {
-  promisify
-} = require("util");
+const { ServerError, PhoneNumberLabel } = require("@clinq/bridge");
+const { promisify } = require("util");
 const Pipedrive = require("pipedrive");
 const HARD_MAX = 40000;
 
@@ -22,13 +17,13 @@ const formatNumber = number => {
 
 const mapResult = (contacts, companyIdentifier) =>
   contacts
-  .filter(contact => contact.name)
-  .filter(contact => contact.phone.length > 0)
-  .map(contact => convertFromPipedriveContact(contact, companyIdentifier));
+    .filter(contact => contact.name)
+    .filter(contact => contact.phone.length > 0)
+    .map(contact => convertFromPipedriveContact(contact, companyIdentifier));
 
 const getAll = async (client, params) => {
   return new Promise(resolve => {
-    client.Persons.getAll(params, function (error, data, additional) {
+    client.Persons.getAll(params, function(error, data, additional) {
       resolve({
         contacts: data,
         info: additional
@@ -43,7 +38,9 @@ const loadPage = async (offset, accumulator, client, companyIdentifier) => {
     limit: 100
   };
   return getAll(client, options).then(data => {
-    const mapped = mapResult(data.contacts, companyIdentifier).concat(accumulator);
+    const mapped = mapResult(data.contacts, companyIdentifier).concat(
+      accumulator
+    );
     if (
       data.info["pagination"]["more_items_in_collection"] &&
       mapped.length <= HARD_MAX
@@ -67,13 +64,16 @@ const getCompanyIdentifier = async client => {
 };
 
 function convertToPipedriveContact(contact) {
+  const phone = contact.phoneNumbers
+    ? contact.phoneNumbers.map(phoneNumber => ({
+        label: parseToPipedriveLabel(phoneNumber.label),
+        value: phoneNumber.phoneNumber
+      }))
+    : [];
   return {
     name: contact.name,
     email: contact.email ? contact.email : null,
-    phone: contact.phoneNumbers.map(phoneNumber => ({
-      label: parseToPipedriveLabel(phoneNumber.label),
-      value: phoneNumber.phoneNumber
-    }))
+    phone
   };
 }
 
@@ -85,14 +85,16 @@ function convertFromPipedriveContact(contact, companyIdentifier) {
     lastName: null,
     organization: contact.org_name || null,
     email: contact.email.length > 0 ? contact.email[0].value : null,
-    contactUrl: companyIdentifier ?
-      `https://${companyIdentifier}.pipedrive.com/person/${contact.id}` : null,
+    contactUrl: companyIdentifier
+      ? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}`
+      : null,
     avatarUrl: null,
     phoneNumbers: contact.phone
       .filter(phoneNumber => phoneNumber.value)
       .map(phoneNumber => ({
-        label: phoneNumber.label ?
-          parseFromPipedriveLabel(phoneNumber.label) : null,
+        label: phoneNumber.label
+          ? parseFromPipedriveLabel(phoneNumber.label)
+          : null,
         phoneNumber: formatNumber(phoneNumber.value)
       }))
   };

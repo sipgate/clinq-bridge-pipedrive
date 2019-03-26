@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@clinq/bridge@^7.7.1":
-  version "7.7.1"
-  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-7.7.1.tgz#afdf629698884a0289b3eee746d7190a73f99b60"
-  integrity sha512-wfXD2fc5mt/MQbUsOmnDOMyanHfwbNjcWy875K7CMgtHhjgoTOIgJjGTUzi8jIds10aOlfhUTN1UxDUEae+LqQ==
+"@clinq/bridge@^9.0.2":
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/@clinq/bridge/-/bridge-9.0.2.tgz#43dec63e92cc10f9f3c2ca1dca370a6507d3aff1"
+  integrity sha512-YChgFouuemEhR3ZE8DZiDRIDBt2hDAsdI0c8QKLtL2EOU3+JLxjKnA33RvPff4DC7FSD+uj+vz0ueJdSzDbsig==
   dependencies:
     ajv "^6.1.1"
     axios "^0.18.0"
@@ -992,9 +992,10 @@ latest-version@^3.0.0:
   dependencies:
     package-json "^4.0.0"
 
-lodash@~4.17.10:
+lodash@^4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+  integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
 
 lowercase-keys@^1.0.0:
   version "1.0.1"
@@ -1338,16 +1339,17 @@ pify@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
 
-pipedrive@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/pipedrive/-/pipedrive-6.0.3.tgz#58964ad57226d3645256a06c31ef4ff6ebf752e7"
+pipedrive@^6.0.4:
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/pipedrive/-/pipedrive-6.0.4.tgz#312ab077017dcd43fa5f93d6ad3896f7afa11808"
+  integrity sha512-Y6NMiSw/L0z/2DLBIWDoElsXnvlulBSYsDc7kiC3TbMyVPKmHAMQkEcPQphgUZ6oXkAKxIlRgtdXS45bevDBfQ==
   dependencies:
     async "~0.9.0"
     fetch "~0.3.6"
-    lodash "~4.17.10"
+    lodash "^4.17.11"
     mime "~1.4.1"
     qs "~6.0.4"
-    sockjs-client "^1.0.3"
+    sockjs-client "^1.3.0"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -1622,9 +1624,10 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-sockjs-client@^1.0.3:
+sockjs-client@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.3.0.tgz#12fc9d6cb663da5739d3dc5fb6e8687da95cb177"
+  integrity sha512-R9jxEzhnnrdxLCNln0xg5uGHqMnkhPSTzUZH2eXcR03S/On9Yvoq2wyUZILRUhZCNVu2PmwWVoyuiPz8th8zbg==
   dependencies:
     debug "^3.2.5"
     eventsource "^1.0.7"

@@ -9,8 +9,8 @@
     "watch": "nodemon index.js"
   },
   "dependencies": {
-    "@clinq/bridge": "^7.7.1",
-    "pipedrive": "^6.0.3"
+    "@clinq/bridge": "^9.0.2",
+    "pipedrive": "^6.0.4"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"

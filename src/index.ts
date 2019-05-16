@@ -1,42 +1,31 @@
-const {
-  ServerError,
-  start
-} = require("@clinq/bridge");
-const {
-  getContactList,
+import { Adapter, ServerError, start } from "@clinq/bridge";
+import {
   createContact,
-  updateContact,
-  deleteContact
-} = require("./clinq-pipedrive-adapter");
+  deleteContact,
+  getContactList,
+  updateContact
+} from "./clinq-pipedrive-adapter";
 
-const adapter = {
-  getContacts: async ({
-    apiKey
-  }) => {
+const adapter: Adapter = {
+  getContacts: async ({ apiKey }) => {
     if (!apiKey) {
       throw new ServerError(401, "Unauthorized");
     }
     return getContactList(apiKey);
   },
-  createContact: async ({
-    apiKey
-  }, contact) => {
+  createContact: async ({ apiKey }, contact) => {
     if (!apiKey) {
       throw new ServerError(401, "Unauthorized");
     }
     return createContact(apiKey, contact);
   },
-  updateContact: async ({
-    apiKey
-  }, id, contact) => {
+  updateContact: async ({ apiKey }, id, contact) => {
     if (!apiKey) {
       throw new ServerError(401, "Unauthorized");
     }
     return updateContact(apiKey, id, contact);
   },
-  deleteContact: async ({
-    apiKey
-  }, id) => {
+  deleteContact: async ({ apiKey }, id) => {
     if (!apiKey) {
       throw new ServerError(401, "Unauthorized");
     }

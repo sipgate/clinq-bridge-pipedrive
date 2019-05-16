@@ -1,2 +1,13 @@
+# Node files
 node_modules
-.DS_*
+npm-debug.log
+package-lock.json
+yarn-error.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+#TypeScript
+dist/

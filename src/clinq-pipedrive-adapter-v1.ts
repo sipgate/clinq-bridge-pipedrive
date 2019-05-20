@@ -128,7 +128,7 @@ function parseToPipedriveLabel(label: PhoneNumberLabel) {
   }
 }
 
-export async function getContactList(apiKey:string) {
+export async function getContacts(apiKey:string) {
   const client = new Client(apiKey, {
     strictMode: true
   });

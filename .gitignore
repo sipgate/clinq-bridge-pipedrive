@@ -11,3 +11,6 @@ yarn-error.log
 
 #TypeScript
 dist/
+
+# env
+env.sh

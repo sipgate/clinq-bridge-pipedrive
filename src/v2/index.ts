@@ -12,7 +12,7 @@ import { Request } from "express";
 import { stringify } from "querystring";
 import parseEnvironment from "../parse-environment";
 import {
-	IPipedriveOAuthResponse,
+	PipedriveOAuthResponse,
 	PipedrivePaginatedResponse,
 	PipedrivePerson,
 	PipedrivePersonTemplate,
@@ -96,6 +96,18 @@ const paginatePersons = async (
 function convertPersonToContact(companyDomain: string | null) {
 	return (person: PipedrivePerson): Contact => {
 		const email = person.email.find(Boolean);
+
+		const contactUrl = companyDomain
+			? `https://${companyDomain}.pipedrive.com/person/${person.id}`
+			: null;
+
+		const phoneNumbers = person.phone
+			.filter((phoneNumber: PipedrivePhone) => phoneNumber.value)
+			.map((phoneNumber: PipedrivePhone) => ({
+				label: parseFromPipedriveLabel(phoneNumber.label),
+				phoneNumber: phoneNumber.value
+			}));
+
 		return {
 			id: String(person.id),
 			name: person.name,
@@ -103,16 +115,9 @@ function convertPersonToContact(companyDomain: string | null) {
 			lastName: null,
 			organization: person.org_name || null,
 			email: email && email.value ? email.value : null,
-			contactUrl: companyDomain
-				? `https://${companyDomain}.pipedrive.com/person/${person.id}`
-				: null,
+			contactUrl,
 			avatarUrl: null,
-			phoneNumbers: person.phone
-				.filter((phoneNumber: PipedrivePhone) => phoneNumber.value)
-				.map((phoneNumber: PipedrivePhone) => ({
-					label: parseFromPipedriveLabel(phoneNumber.label),
-					phoneNumber: phoneNumber.value
-				}))
+			phoneNumbers
 		};
 	};
 }
@@ -241,29 +246,27 @@ export async function handleOAuth2Callback(req: Request) {
 	const { clientId, clientSecret, redirectUrl } = parseEnvironment();
 	const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
-	try {
-		const {
-			data: { refresh_token }
-		} = await axios.post<IPipedriveOAuthResponse>(
-			"https://oauth.pipedrive.com/oauth/token",
-			stringify({
-				grant_type: "authorization_code",
-				code: req.query.code,
-				redirect_uri: redirectUrl
-			}),
-			{
-				headers: {
-					Authorization: `Basic ${auth}`,
-					"Content-Type": "application/x-www-form-urlencoded"
-				}
+	const data = stringify({
+		grant_type: "authorization_code",
+		code: req.query.code,
+		redirect_uri: redirectUrl
+	});
+
+	const {
+		data: { refresh_token }
+	} = await axios.post<PipedriveOAuthResponse>(
+		"https://oauth.pipedrive.com/oauth/token",
+		data,
+		{
+			headers: {
+				Authorization: `Basic ${auth}`,
+				"Content-Type": "application/x-www-form-urlencoded"
 			}
-		);
-		return {
-			apiKey: refresh_token,
-			apiUrl: "https://api-proxy.pipedrive.com"
-		};
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+		}
+	);
+
+	return {
+		apiKey: refresh_token,
+		apiUrl: "https://api-proxy.pipedrive.com"
+	};
 }

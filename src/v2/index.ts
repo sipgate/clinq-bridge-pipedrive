@@ -80,7 +80,7 @@ const paginatePersons = async (
 	);
 
 	const mapped = persons
-		? [...accumulator, ...persons.map(convertPersionToContact(companyDomain))]
+		? [...accumulator, ...persons.map(convertPersonToContact(companyDomain))]
 		: accumulator;
 
 	if (more_items_in_collection) {
@@ -92,7 +92,7 @@ const paginatePersons = async (
 	}
 };
 
-function convertPersionToContact(companyDomain: string | null) {
+function convertPersonToContact(companyDomain: string | null) {
 	return (person: PipedrivePerson): Contact => {
 		const email = person.email.find(Boolean);
 		return {
@@ -188,7 +188,7 @@ export async function createContact(config: Config, contact: ContactTemplate) {
 		convertedContact
 	);
 
-	return convertPersionToContact(companyDomain)(data);
+	return convertPersonToContact(companyDomain)(data);
 }
 
 export async function updateContact(

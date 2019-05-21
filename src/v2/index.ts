@@ -206,7 +206,7 @@ export async function updateContact(
 
 	const convertedContact = convertToPipedriveContact(contact);
 
-	const { data } = await client.post<PipedriveResponse<PipedrivePerson>>(
+	const { data } = await client.put<PipedriveResponse<PipedrivePerson>>(
 		`/persons/${id}`,
 		convertedContact
 	);

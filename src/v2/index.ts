@@ -12,6 +12,7 @@ import { Request } from "express";
 import { stringify } from "querystring";
 import parseEnvironment from "../parse-environment";
 import {
+	IPipedriveOAuthResponse,
 	PipedrivePaginatedResponse,
 	PipedrivePerson,
 	PipedrivePersonTemplate,
@@ -59,7 +60,7 @@ const getCompanyDomain = async (client: AxiosInstance) => {
 
 const paginatePersons = async (
 	client: AxiosInstance,
-	accumulator: Contact[],
+	accumulated: Contact[],
 	offset: number,
 	companyDomain: string | null
 ): Promise<Contact[]> => {
@@ -79,16 +80,16 @@ const paginatePersons = async (
 		`/persons?${stringify(options)}`
 	);
 
-	const mapped = persons
-		? [...accumulator, ...persons.map(convertPersonToContact(companyDomain))]
-		: accumulator;
+	const totalContacts = persons
+		? [...accumulated, ...persons.map(convertPersonToContact(companyDomain))]
+		: accumulated;
 
 	if (more_items_in_collection) {
 		offset = limit + start;
 		console.log({ more_items_in_collection, limit, start });
-		return paginatePersons(client, mapped, offset, companyDomain);
+		return paginatePersons(client, totalContacts, offset, companyDomain);
 	} else {
-		return mapped;
+		return totalContacts;
 	}
 };
 
@@ -184,16 +185,18 @@ export async function createContact(config: Config, contact: ContactTemplate) {
 
 	const convertedContact = convertToPipedriveContact(contact);
 
-	const { data } = await client.post<PipedriveResponse<PipedrivePerson>>(
+	const {
+		data: { data: person }
+	} = await client.post<PipedriveResponse<PipedrivePerson>>(
 		"/persons",
 		convertedContact
 	);
 
-	if (!data.data) {
+	if (!person) {
 		throw new ServerError(400, "Could not create contact");
 	}
 
-	return convertPersonToContact(companyDomain)(data.data);
+	return convertPersonToContact(companyDomain)(person);
 }
 
 export async function updateContact(
@@ -206,16 +209,18 @@ export async function updateContact(
 
 	const convertedContact = convertToPipedriveContact(contact);
 
-	const { data } = await client.put<PipedriveResponse<PipedrivePerson>>(
+	const {
+		data: { data: person }
+	} = await client.put<PipedriveResponse<PipedrivePerson>>(
 		`/persons/${id}`,
 		convertedContact
 	);
 
-	if (!data.data) {
+	if (!person) {
 		throw new ServerError(400, "Could not update contact");
 	}
 
-	return convertPersonToContact(companyDomain)(data.data);
+	return convertPersonToContact(companyDomain)(person);
 }
 
 export async function deleteContact(config: Config, id: string) {
@@ -237,10 +242,9 @@ export async function handleOAuth2Callback(req: Request) {
 	const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
 	try {
-		const { data } = await axios.post<{
-			access_token: string;
-			refresh_token: string;
-		}>(
+		const {
+			data: { refresh_token }
+		} = await axios.post<IPipedriveOAuthResponse>(
 			"https://oauth.pipedrive.com/oauth/token",
 			stringify({
 				grant_type: "authorization_code",
@@ -255,7 +259,7 @@ export async function handleOAuth2Callback(req: Request) {
 			}
 		);
 		return {
-			apiKey: data.refresh_token,
+			apiKey: refresh_token,
 			apiUrl: "https://api-proxy.pipedrive.com"
 		};
 	} catch (error) {

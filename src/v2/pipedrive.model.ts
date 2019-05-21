@@ -1,3 +1,8 @@
+export interface IPipedriveOAuthResponse {
+	access_token: string;
+	refresh_token: string;
+}
+
 export interface PipedriveField {
 	value: string;
 	primary?: boolean;

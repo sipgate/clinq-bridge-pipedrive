@@ -127,6 +127,7 @@ function convertToPipedriveContact(
 				})
 		  )
 		: [];
+
 	return {
 		name: contact.name || "",
 		email: contact.email || "",
@@ -183,12 +184,16 @@ export async function createContact(config: Config, contact: ContactTemplate) {
 
 	const convertedContact = convertToPipedriveContact(contact);
 
-	const { data } = await client.post<PipedrivePerson>(
+	const { data } = await client.post<PipedriveResponse<PipedrivePerson>>(
 		"/persons",
 		convertedContact
 	);
 
-	return convertPersonToContact(companyDomain)(data);
+	if (!data.data) {
+		throw new ServerError(400, "Could not create contact");
+	}
+
+	return convertPersonToContact(companyDomain)(data.data);
 }
 
 export async function updateContact(
@@ -196,11 +201,26 @@ export async function updateContact(
 	id: string,
 	contact: ContactUpdate
 ) {
-	return contact as Contact;
+	const client = await getClient(config);
+	const companyDomain = await getCompanyDomain(client);
+
+	const convertedContact = convertToPipedriveContact(contact);
+
+	const { data } = await client.post<PipedriveResponse<PipedrivePerson>>(
+		`/persons/${id}`,
+		convertedContact
+	);
+
+	if (!data.data) {
+		throw new ServerError(400, "Could not update contact");
+	}
+
+	return convertPersonToContact(companyDomain)(data.data);
 }
 
 export async function deleteContact(config: Config, id: string) {
-	return;
+	const client = await getClient(config);
+	return client.delete(`/persons/${id}`);
 }
 
 export async function getOAuth2RedirectUrl() {

@@ -220,7 +220,7 @@ export async function updateContact(
 
 export async function deleteContact(config: Config, id: string) {
 	const client = await getClient(config);
-	return client.delete(`/persons/${id}`);
+	await client.delete(`/persons/${id}`);
 }
 
 export async function getOAuth2RedirectUrl() {

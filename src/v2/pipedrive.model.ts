@@ -13,7 +13,7 @@ export interface PipedrivePhone extends PipedriveField {
 }
 
 export interface PipedrivePerson {
-	id: string;
+	id: number;
 	org_name: string;
 	name: string;
 	email: PipedriveField[];
@@ -27,7 +27,7 @@ export interface PipedrivePersonTemplate {
 }
 
 export interface PipedriveUser {
-	id: string;
+	id: number;
 	name: string;
 	email: string;
 	company_domain: string;

@@ -80,6 +80,7 @@ function convertToPipedriveContact(contact:any) {
 }
 
 function convertFromPipedriveContact(contact:any, companyIdentifier?:string) {
+  console.log(contact.phone);
   return {
     id: String(contact.id),
     name: contact.name,

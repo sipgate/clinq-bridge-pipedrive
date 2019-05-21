@@ -4,7 +4,7 @@ import {
 	deleteContact as deleteContactV1,
 	getContacts as getContactsV1,
 	updateContact as updateContactV1
-} from "./clinq-pipedrive-adapter-v1";
+} from "./v1";
 import {
 	createContact as createContactV2,
 	deleteContact as deleteContactV2,
@@ -12,7 +12,7 @@ import {
 	getOAuth2RedirectUrl,
 	handleOAuth2Callback,
 	updateContact as updateContactV2
-} from "./clinq-pipedrive-adapter-v2";
+} from "./v2";
 
 const adapter: Adapter = {
 	getContacts: async config => {

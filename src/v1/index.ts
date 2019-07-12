@@ -80,7 +80,6 @@ function convertToPipedriveContact(contact:any) {
 }
 
 function convertFromPipedriveContact(contact:any, companyIdentifier?:string) {
-  console.log(contact.phone);
   return {
     id: String(contact.id),
     name: contact.name,
@@ -95,9 +94,7 @@ function convertFromPipedriveContact(contact:any, companyIdentifier?:string) {
     phoneNumbers: contact.phone
       .filter((phoneNumber:any) => phoneNumber.value)
       .map((phoneNumber:any) => ({
-        label: phoneNumber.label
-          ? parseFromPipedriveLabel(phoneNumber.label)
-          : null,
+        label: parseFromPipedriveLabel(phoneNumber.label),
         phoneNumber: formatNumber(phoneNumber.value)
       }))
   };
@@ -119,13 +116,13 @@ function parseFromPipedriveLabel(label: string) {
 function parseToPipedriveLabel(label: PhoneNumberLabel) {
   switch (label) {
     case PhoneNumberLabel.WORK:
-      return "Work";
+      return "work";
     case PhoneNumberLabel.HOME:
-      return "Home";
+      return "home";
     case PhoneNumberLabel.MOBILE:
-      return "Mobile";
+      return "mobile";
     default:
-      return "Other";
+      return "";
   }
 }
 

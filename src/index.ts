@@ -3,7 +3,8 @@ import {
 	createContact as createContactV1,
 	deleteContact as deleteContactV1,
 	getContacts as getContactsV1,
-	updateContact as updateContactV1
+	updateContact as updateContactV1,
+	handleCallEvent as handleCallEventV1
 } from "./v1";
 import {
 	createContact as createContactV2,
@@ -60,7 +61,18 @@ const adapter: Adapter = {
 		return deleteContactV1(config.apiKey, id);
 	},
 	getOAuth2RedirectUrl,
-	handleOAuth2Callback
+	handleOAuth2Callback,
+	handleCallEvent: async (config, callEvent) => {
+		if (!config.apiKey) {
+			throw new ServerError(401, "Unauthorized");
+		}
+
+		if (config.apiUrl) {
+			return;
+		}
+
+		return handleCallEventV1(config.apiKey, callEvent);
+	},
 };
 
 start(adapter);

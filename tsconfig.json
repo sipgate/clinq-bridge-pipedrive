@@ -1,13 +1,14 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "*": ["types/*"] },
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "dist",
-    "sourceMap": true,
-    "strict": true
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "src/**/*.test.ts"]
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": { "*": ["types/*"] },
+		"target": "es6",
+		"module": "commonjs",
+		"outDir": "dist",
+		"sourceMap": true,
+		"strict": true,
+		"esModuleInterop": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "src/**/*.test.ts"]
 }

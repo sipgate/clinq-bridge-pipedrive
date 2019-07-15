@@ -1,11 +1,11 @@
 import {
+	CallDirection,
 	CallEvent,
 	Contact,
 	ContactTemplate,
 	ContactUpdate,
 	PhoneNumberLabel,
-	ServerError,
-	CallDirection
+	ServerError
 } from "@clinq/bridge";
 import { Client } from "pipedrive";
 import { promisify } from "util";
@@ -200,38 +200,43 @@ export async function handleCallEvent(
 	apiKey: string,
 	{ from, to, start, end, direction, channel }: CallEvent
 ) {
-	const client = await getClient(apiKey);
-	const types = await promisify(client.ActivityTypes.getAll)();
-	const callTypeSupported = types.some(
-		(type: any) => type.key_string === "call"
-	);
-	if (!callTypeSupported) {
-		return;
+	try {
+		const client = await getClient(apiKey);
+		const types = await promisify(client.ActivityTypes.getAll)();
+		const callTypeSupported = types.some(
+			(type: any) => type.key_string === "call"
+		);
+		if (!callTypeSupported) {
+			return;
+		}
+		const phoneNumber = parsePhoneNumber(
+			direction === CallDirection.IN ? from : to
+		);
+		const persons = await Promise.all([
+			findPerson(client, phoneNumber.e164),
+			findPerson(client, phoneNumber.localized)
+		]);
+		const person = persons.find(Boolean);
+		if (!person) {
+			return;
+		}
+		const directionInfo =
+			direction === CallDirection.IN ? "Incoming" : "Outgoing";
+		const duration = formatDuration(end - start);
+		const date = formatDate(start);
+		const timeOfDay = formatTime(start);
+		const activity = {
+			type: "call",
+			subject: `${directionInfo} CLINQ call in "${channel.name}"`,
+			done: 1,
+			duration,
+			due_date: date,
+			due_time: timeOfDay,
+			person_id: person.id
+		};
+		await promisify(client.Activities.add)(activity);
+	} catch (error) {
+		console.error("Could not save call event", error.message);
+		throw new ServerError(400, "Could not save call event");
 	}
-	const phoneNumber = parsePhoneNumber(
-		direction === CallDirection.IN ? from : to
-	);
-	const persons = await Promise.all([
-		findPerson(client, phoneNumber.e164),
-		findPerson(client, phoneNumber.localized)
-	]);
-	const person = persons.find(Boolean);
-	if (!person) {
-		return;
-	}
-	const directionInfo =
-		direction === CallDirection.IN ? "Incoming" : "Outgoing";
-	const duration = formatDuration(end - start);
-	const date = formatDate(start);
-	const timeOfDay = formatTime(start);
-	const activity = {
-		type: "call",
-		subject: `${directionInfo} CLINQ call in "${channel.name}"`,
-		done: 1,
-		duration,
-		due_date: date,
-		due_time: timeOfDay,
-		person_id: person.id
-	};
-	await promisify(client.Activities.add)(activity);
 }

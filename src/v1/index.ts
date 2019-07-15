@@ -233,6 +233,5 @@ export async function handleCallEvent(
 		due_time: timeOfDay,
 		person_id: person.id
 	};
-	console.log(activity);
 	await promisify(client.Activities.add)(activity);
 }

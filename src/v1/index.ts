@@ -26,11 +26,11 @@ const formatNumber = (phoneNumber: string) => {
 	return p;
 };
 
-const mapResult = (contacts: any[], companyIdentifier?: string) =>
+const mapResult = (contacts: any[], companyDomain?: string) =>
 	contacts
 		.filter(contact => contact.name)
 		.filter(contact => contact.phone.length > 0)
-		.map(contact => convertFromPipedriveContact(contact, companyIdentifier));
+		.map(contact => convertFromPipedriveContact(contact, companyDomain));
 
 const getAll = async (client: any, params: any) => {
 	return new Promise(resolve => {
@@ -47,16 +47,14 @@ const loadPage = async (
 	offset: number,
 	accumulator: any,
 	client: any,
-	companyIdentifier?: string
+	companyDomain?: string
 ): Promise<Contact[]> => {
 	const options = {
 		start: offset,
 		limit: 100
 	};
 	return getAll(client, options).then((data: any) => {
-		const mapped = mapResult(data.contacts, companyIdentifier).concat(
-			accumulator
-		);
+		const mapped = mapResult(data.contacts, companyDomain).concat(accumulator);
 		if (
 			data.info.pagination.more_items_in_collection &&
 			mapped.length <= HARD_MAX
@@ -69,13 +67,13 @@ const loadPage = async (
 	});
 };
 
-const getCompanyIdentifier = async (client: any) => {
-	const user = await promisify(client.Users.get)("self");
-	if (!(user.companies && user.company_id)) {
+const getCompanyDomain = async (client: any) => {
+	const user = await promisify(client.Users.get)("me");
+	console.log(user.company_domain);
+	if (!user.company_domain) {
 		return null;
 	}
-	const company = user.companies[user.company_id];
-	return (company && company.identifier) || null;
+	return user.company_domain;
 };
 
 function convertToPipedriveContact(contact: any) {
@@ -92,7 +90,7 @@ function convertToPipedriveContact(contact: any) {
 	};
 }
 
-function convertFromPipedriveContact(contact: any, companyIdentifier?: string) {
+function convertFromPipedriveContact(contact: any, companyDomain?: string) {
 	return {
 		id: String(contact.id),
 		name: contact.name,
@@ -100,8 +98,8 @@ function convertFromPipedriveContact(contact: any, companyIdentifier?: string) {
 		lastName: null,
 		organization: contact.org_name || null,
 		email: contact.email.length > 0 ? contact.email[0].value : null,
-		contactUrl: companyIdentifier
-			? `https://${companyIdentifier}.pipedrive.com/person/${contact.id}`
+		contactUrl: companyDomain
+			? `https://${companyDomain}.pipedrive.com/person/${contact.id}`
 			: null,
 		avatarUrl: null,
 		phoneNumbers: contact.phone
@@ -163,18 +161,18 @@ async function findPerson(client: any, term: string): Promise<any> {
 
 export async function getContacts(apiKey: string) {
 	const client = await getClient(apiKey);
-	const companyIdentifier = await getCompanyIdentifier(client);
+	const companyDomain = await getCompanyDomain(client);
 
-	return loadPage(0, [], client, companyIdentifier);
+	return loadPage(0, [], client, companyDomain);
 }
 
 export async function createContact(apiKey: string, contact: ContactTemplate) {
 	const client = await getClient(apiKey);
-	const companyIdentifier = await getCompanyIdentifier(client);
+	const companyDomain = await getCompanyDomain(client);
 	const convertedContact = convertToPipedriveContact(contact);
 	const response = await promisify(client.Persons.add)(convertedContact);
 
-	return convertFromPipedriveContact(response, companyIdentifier);
+	return convertFromPipedriveContact(response, companyDomain);
 }
 
 export async function updateContact(
@@ -183,11 +181,11 @@ export async function updateContact(
 	contact: ContactUpdate
 ) {
 	const client = await getClient(apiKey);
-	const companyIdentifier = await getCompanyIdentifier(client);
+	const companyDomain = await getCompanyDomain(client);
 	const convertedContact = convertToPipedriveContact(contact);
 	const response = await promisify(client.Persons.update)(id, convertedContact);
 
-	return convertFromPipedriveContact(response, companyIdentifier);
+	return convertFromPipedriveContact(response, companyDomain);
 }
 
 export async function deleteContact(apiKey: string, id: string) {

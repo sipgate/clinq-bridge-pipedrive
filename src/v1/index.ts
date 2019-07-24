@@ -69,7 +69,6 @@ const loadPage = async (
 
 const getCompanyDomain = async (client: any) => {
 	const user = await promisify(client.Users.get)("me");
-	console.log(user.company_domain);
 	if (!user.company_domain) {
 		return null;
 	}

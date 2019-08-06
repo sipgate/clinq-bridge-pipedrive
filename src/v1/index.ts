@@ -215,6 +215,7 @@ export async function handleCallEvent(
 		]);
 		const person = persons.find(Boolean);
 		if (!person) {
+			console.warn(`Could not find person for ${phoneNumber.e164}`);
 			return;
 		}
 		const directionInfo =

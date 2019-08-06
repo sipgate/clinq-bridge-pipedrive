@@ -3,8 +3,8 @@ import {
 	createContact as createContactV1,
 	deleteContact as deleteContactV1,
 	getContacts as getContactsV1,
-	updateContact as updateContactV1,
-	handleCallEvent as handleCallEventV1
+	handleCallEvent as handleCallEventV1,
+	updateContact as updateContactV1
 } from "./v1";
 import {
 	createContact as createContactV2,
@@ -72,7 +72,7 @@ const adapter: Adapter = {
 		}
 
 		return handleCallEventV1(config.apiKey, callEvent);
-	},
+	}
 };
 
 start(adapter);

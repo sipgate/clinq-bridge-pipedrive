@@ -60,7 +60,7 @@ const loadPage = async (
 			mapped.length <= HARD_MAX
 		) {
 			offset = data.info.pagination.limit + data.info.pagination.start;
-			return loadPage(offset, mapped, client);
+			return loadPage(offset, mapped, client, companyDomain);
 		} else {
 			return mapped;
 		}

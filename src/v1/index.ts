@@ -18,14 +18,6 @@ function anonymizeKey(apiKey: string) {
 	return `*****${apiKey.substr(apiKey.length - 5)}`;
 }
 
-const formatNumber = (phoneNumber: string) => {
-	let p = phoneNumber.replace(/[^0-9+]/gi, "");
-	p = p.replace(/^00/, "");
-	p = p.replace(/^\+/, "");
-	p = "+" + p.replace(/^0/, "49");
-	return p;
-};
-
 const mapResult = (contacts: any[], companyDomain?: string) =>
 	contacts
 		.filter(contact => contact.name)
@@ -105,7 +97,7 @@ function convertFromPipedriveContact(contact: any, companyDomain?: string) {
 			.filter((phoneNumber: any) => phoneNumber.value)
 			.map((phoneNumber: any) => ({
 				label: parseFromPipedriveLabel(phoneNumber.label),
-				phoneNumber: formatNumber(phoneNumber.value)
+				phoneNumber: phoneNumber.value
 			}))
 	};
 }

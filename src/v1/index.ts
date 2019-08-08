@@ -203,7 +203,9 @@ export async function handleCallEvent(
 		);
 		const persons = await Promise.all([
 			findPerson(client, phoneNumber.e164),
-			findPerson(client, phoneNumber.localized)
+			findPerson(client, phoneNumber.e164.replace(/\D/g, "")),
+			findPerson(client, phoneNumber.localized),
+			findPerson(client, phoneNumber.localized.replace(/\D/g, ""))
 		]);
 		const person = persons.find(Boolean);
 		if (!person) {

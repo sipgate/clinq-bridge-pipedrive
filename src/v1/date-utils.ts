@@ -10,8 +10,7 @@ export function formatDuration(ms: number): string {
 }
 
 export function formatDate(time: number) {
-	const date = new Date(time);
-	return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+	return moment(time).format("YYYY-MM-DD");
 }
 
 export function formatTime(time: number) {

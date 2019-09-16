@@ -18,5 +18,5 @@ export function formatDate(time: number) {
 export function formatTime(time: number) {
 	return moment(time)
 		.utc()
-		.format("HH:MM");
+		.format("HH:mm");
 }

@@ -15,5 +15,7 @@ dist/
 # env
 env.sh
 
+.env
+
 # example
 /exampleCallEvent.json

@@ -17,7 +17,7 @@
 	"license": "Apache-2.0",
 	"scripts": {
 		"postinstall": "tsc",
-		"start": "ts-node-dev src/index.ts",
+		"start": "env-cmd -f ./.env/.env.local ts-node-dev src/index.ts",
 		"lint": "tslint --project tsconfig.json"
 	},
 	"dependencies": {
@@ -25,10 +25,11 @@
 		"@types/express": "^4.17.2",
 		"@types/node": "^13.7.4",
 		"axios": "^0.19.2",
+		"env-cmd": "^10.1.0",
 		"express": "^4.17.1",
 		"google-libphonenumber": "^3.2.6",
 		"moment": "^2.24.0",
-		"pipedrive": "^10.0.1",
+		"pipedrive": "^8.0.0",
 		"typescript": "^3.8.2"
 	},
 	"devDependencies": {

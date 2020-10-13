@@ -248,7 +248,7 @@ export async function handleOAuth2Callback(req: Request) {
 
 	const data = stringify({
 		grant_type: "authorization_code",
-		code: req.query.code,
+		code: req.query.code?.toString(),
 		redirect_uri: redirectUrl
 	});
 

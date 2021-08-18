@@ -16,14 +16,15 @@
 	],
 	"license": "Apache-2.0",
 	"scripts": {
-		"postinstall": "tsc",
+		"build": "tsc",
 		"start": "env-cmd -f ./.env/.env.local ts-node-dev src/index.ts",
 		"lint": "tslint --project tsconfig.json"
 	},
 	"dependencies": {
-		"@clinq/bridge": "^11.1.1",
+		"@clinq/bridge": "^11.2.4",
 		"@types/express": "^4.17.2",
 		"@types/node": "^13.7.4",
+		"@types/google-libphonenumber": "^7.4.17",
 		"axios": "^0.19.2",
 		"env-cmd": "^10.1.0",
 		"express": "^4.17.1",
@@ -33,7 +34,6 @@
 		"typescript": "^3.8.2"
 	},
 	"devDependencies": {
-		"@types/google-libphonenumber": "^7.4.17",
 		"husky": "^4.2.3",
 		"lint-staged": "^10.0.7",
 		"prettier": "^1.19.1",

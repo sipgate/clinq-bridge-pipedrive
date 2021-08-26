@@ -4,7 +4,7 @@ import {
 	deleteContact as deleteContactV1,
 	getContacts as getContactsV1,
 	handleCallEvent as handleCallEventV1,
-	updateContact as updateContactV1
+	updateContact as updateContactV1,
 } from "./v1";
 import {
 	createContact as createContactV2,
@@ -12,11 +12,11 @@ import {
 	getContacts as getContactListV2,
 	getOAuth2RedirectUrl,
 	handleOAuth2Callback,
-	updateContact as updateContactV2
+	updateContact as updateContactV2,
 } from "./v2";
 
 const adapter: Adapter = {
-	getContacts: async config => {
+	getContacts: async (config) => {
 		if (!config.apiKey) {
 			throw new ServerError(401, "Unauthorized");
 		}
@@ -72,7 +72,7 @@ const adapter: Adapter = {
 		}
 
 		return handleCallEventV1(config.apiKey, callEvent);
-	}
+	},
 };
 
 start(adapter);

@@ -17,12 +17,12 @@ export const parsePhoneNumber = (phoneNumber: string) => {
 			localized: phoneUtil.format(
 				phoneUtil.parse(`+${phoneNumber}`),
 				PhoneNumberFormat.NATIONAL
-			)
+			),
 		};
 	} catch (error) {
 		return {
 			e164: phoneNumber,
-			localized: phoneNumber
+			localized: phoneNumber,
 		};
 	}
 };

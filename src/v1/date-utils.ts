@@ -10,13 +10,9 @@ export function formatDuration(ms: number): string {
 }
 
 export function formatDate(time: number) {
-	return moment(time)
-		.utc()
-		.format("YYYY-MM-DD");
+	return moment(time).utc().format("YYYY-MM-DD");
 }
 
 export function formatTime(time: number) {
-	return moment(time)
-		.utc()
-		.format("HH:mm");
+	return moment(time).utc().format("HH:mm");
 }

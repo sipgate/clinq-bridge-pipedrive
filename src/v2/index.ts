@@ -5,7 +5,7 @@ import {
 	ContactUpdate,
 	PhoneNumber,
 	PhoneNumberLabel,
-	ServerError
+	ServerError,
 } from "@clinq/bridge";
 import axios, { AxiosInstance } from "axios";
 import { Request } from "express";
@@ -18,7 +18,7 @@ import {
 	PipedrivePersonTemplate,
 	PipedrivePhone,
 	PipedriveResponse,
-	PipedriveUser
+	PipedriveUser,
 } from "./pipedrive.model";
 
 function parseFromPipedriveLabel(label: string) {
@@ -50,7 +50,7 @@ function parseToPipedriveLabel(label: PhoneNumberLabel) {
 const getCompanyDomain = async (client: AxiosInstance) => {
 	try {
 		const {
-			data: { data: user }
+			data: { data: user },
 		} = await client.get<PipedriveResponse<PipedriveUser>>("/users/me");
 		return user ? user.company_domain : null;
 	} catch (error) {
@@ -66,16 +66,16 @@ const paginatePersons = async (
 ): Promise<Contact[]> => {
 	const options = {
 		start: offset,
-		limit: 100
+		limit: 100,
 	};
 
 	const {
 		data: {
 			data: persons,
 			additional_data: {
-				pagination: { more_items_in_collection, limit, start }
-			}
-		}
+				pagination: { more_items_in_collection, limit, start },
+			},
+		},
 	} = await client.get<PipedrivePaginatedResponse<PipedrivePerson[]>>(
 		`/persons?${stringify(options)}`
 	);
@@ -105,7 +105,7 @@ function convertPersonToContact(companyDomain: string | null) {
 			.filter((phoneNumber: PipedrivePhone) => phoneNumber.value)
 			.map((phoneNumber: PipedrivePhone) => ({
 				label: parseFromPipedriveLabel(phoneNumber.label),
-				phoneNumber: phoneNumber.value
+				phoneNumber: phoneNumber.value,
 			}));
 
 		return {
@@ -117,7 +117,7 @@ function convertPersonToContact(companyDomain: string | null) {
 			email: email && email.value ? email.value : null,
 			contactUrl,
 			avatarUrl: null,
-			phoneNumbers
+			phoneNumbers,
 		};
 	};
 }
@@ -129,7 +129,7 @@ function convertToPipedriveContact(
 		? contact.phoneNumbers.map(
 				(phoneNumber: PhoneNumber): PipedrivePhone => ({
 					label: parseToPipedriveLabel(phoneNumber.label),
-					value: phoneNumber.phoneNumber
+					value: phoneNumber.phoneNumber,
 				})
 		  )
 		: [];
@@ -137,7 +137,7 @@ function convertToPipedriveContact(
 	return {
 		name: contact.name || "",
 		email: contact.email || "",
-		phone
+		phone,
 	};
 }
 
@@ -152,21 +152,21 @@ async function getClient({ apiKey, apiUrl }: Config) {
 		"https://oauth.pipedrive.com/oauth/token",
 		stringify({
 			grant_type: "refresh_token",
-			refresh_token: apiKey
+			refresh_token: apiKey,
 		}),
 		{
 			headers: {
 				Authorization: `Basic ${auth}`,
-				"Content-Type": "application/x-www-form-urlencoded"
-			}
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
 		}
 	);
 
 	return axios.create({
 		baseURL: apiUrl,
 		headers: {
-			Authorization: `Bearer ${data.access_token}`
-		}
+			Authorization: `Bearer ${data.access_token}`,
+		},
 	});
 }
 
@@ -191,7 +191,7 @@ export async function createContact(config: Config, contact: ContactTemplate) {
 	const convertedContact = convertToPipedriveContact(contact);
 
 	const {
-		data: { data: person }
+		data: { data: person },
 	} = await client.post<PipedriveResponse<PipedrivePerson>>(
 		"/persons",
 		convertedContact
@@ -215,7 +215,7 @@ export async function updateContact(
 	const convertedContact = convertToPipedriveContact(contact);
 
 	const {
-		data: { data: person }
+		data: { data: person },
 	} = await client.put<PipedriveResponse<PipedrivePerson>>(
 		`/persons/${id}`,
 		convertedContact
@@ -237,7 +237,7 @@ export async function getOAuth2RedirectUrl() {
 	const { clientId, redirectUrl } = parseEnvironment();
 	const query = {
 		client_id: clientId,
-		redirect_uri: redirectUrl
+		redirect_uri: redirectUrl,
 	};
 	return `https://oauth.pipedrive.com/oauth/authorize?${stringify(query)}`;
 }
@@ -249,24 +249,24 @@ export async function handleOAuth2Callback(req: Request) {
 	const data = stringify({
 		grant_type: "authorization_code",
 		code: req.query.code?.toString(),
-		redirect_uri: redirectUrl
+		redirect_uri: redirectUrl,
 	});
 
 	const {
-		data: { refresh_token }
+		data: { refresh_token },
 	} = await axios.post<PipedriveOAuthResponse>(
 		"https://oauth.pipedrive.com/oauth/token",
 		data,
 		{
 			headers: {
 				Authorization: `Basic ${auth}`,
-				"Content-Type": "application/x-www-form-urlencoded"
-			}
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
 		}
 	);
 
 	return {
 		apiKey: refresh_token,
-		apiUrl: "https://api-proxy.pipedrive.com"
+		apiUrl: "https://api-proxy.pipedrive.com",
 	};
 }

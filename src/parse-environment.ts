@@ -7,7 +7,7 @@ export interface OAuth2Options {
 const {
 	CLIENT_ID: clientId,
 	CLIENT_SECRET: clientSecret,
-	REDIRECT_URL: redirectUrl
+	REDIRECT_URL: redirectUrl,
 } = process.env;
 
 export default function parseEnvironment(): OAuth2Options {
@@ -26,6 +26,6 @@ export default function parseEnvironment(): OAuth2Options {
 	return {
 		clientId,
 		clientSecret,
-		redirectUrl
+		redirectUrl,
 	};
 }

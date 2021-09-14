@@ -5,7 +5,7 @@ import {
 	ContactTemplate,
 	ContactUpdate,
 	PhoneNumberLabel,
-	ServerError
+	ServerError,
 } from "@clinq/bridge";
 import { Client } from "pipedrive";
 import { promisify } from "util";
@@ -20,16 +20,16 @@ function anonymizeKey(apiKey: string) {
 
 const mapResult = (contacts: any[], companyDomain?: string) =>
 	contacts
-		.filter(contact => contact.name)
-		.filter(contact => contact.phone.length > 0)
-		.map(contact => convertFromPipedriveContact(contact, companyDomain));
+		.filter((contact) => contact.name)
+		.filter((contact) => contact.phone.length > 0)
+		.map((contact) => convertFromPipedriveContact(contact, companyDomain));
 
 const getAll = async (client: any, params: any) => {
-	return new Promise(resolve => {
+	return new Promise((resolve) => {
 		client.Persons.getAll(params, (error: any, data: any, additional: any) => {
 			resolve({
 				contacts: data,
-				info: additional
+				info: additional,
 			});
 		});
 	});
@@ -43,7 +43,7 @@ const loadPage = async (
 ): Promise<Contact[]> => {
 	const options = {
 		start: offset,
-		limit: 100
+		limit: 100,
 	};
 	return getAll(client, options).then((data: any) => {
 		const mapped = mapResult(data.contacts, companyDomain).concat(accumulator);
@@ -71,13 +71,13 @@ function convertToPipedriveContact(contact: any) {
 	const phone = contact.phoneNumbers
 		? contact.phoneNumbers.map((phoneNumber: any) => ({
 				label: parseToPipedriveLabel(phoneNumber.label),
-				value: phoneNumber.phoneNumber
+				value: phoneNumber.phoneNumber,
 		  }))
 		: [];
 	return {
 		name: contact.name,
 		email: contact.email ? contact.email : null,
-		phone
+		phone,
 	};
 }
 
@@ -97,8 +97,8 @@ function convertFromPipedriveContact(contact: any, companyDomain?: string) {
 			.filter((phoneNumber: any) => phoneNumber.value)
 			.map((phoneNumber: any) => ({
 				label: parseFromPipedriveLabel(phoneNumber.label),
-				phoneNumber: phoneNumber.value
-			}))
+				phoneNumber: phoneNumber.value,
+			})),
 	};
 }
 
@@ -130,7 +130,7 @@ function parseToPipedriveLabel(label: PhoneNumberLabel) {
 
 async function getClient(apiKey: string): Promise<any> {
 	const client = new Client(apiKey, {
-		strictMode: true
+		strictMode: true,
 	});
 
 	const anonymizedKey = anonymizeKey(apiKey);
@@ -205,7 +205,7 @@ export async function handleCallEvent(
 			findPerson(client, phoneNumber.e164),
 			findPerson(client, phoneNumber.e164.replace(/\D/g, "")),
 			findPerson(client, phoneNumber.localized),
-			findPerson(client, phoneNumber.localized.replace(/\D/g, ""))
+			findPerson(client, phoneNumber.localized.replace(/\D/g, "")),
 		]);
 		const person = persons.find(Boolean);
 		if (!person) {
@@ -224,7 +224,7 @@ export async function handleCallEvent(
 			duration,
 			due_date: date,
 			due_time: timeOfDay,
-			person_id: person.id
+			person_id: person.id,
 		};
 		await promisify(client.Activities.add)(activity);
 	} catch (error) {

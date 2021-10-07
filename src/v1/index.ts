@@ -47,7 +47,7 @@ const loadPage = async (
 	};
 	return getAll(client, options).then((data: any) => {
 		const mapped = mapResult(data.contacts, companyDomain).concat(accumulator);
-		if (
+		if (data.info && data.info.pagination &&
 			data.info.pagination.more_items_in_collection &&
 			mapped.length <= HARD_MAX
 		) {

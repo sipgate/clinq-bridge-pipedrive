@@ -46,7 +46,7 @@ spec:
             - name: CACHE_REFRESH_INTERVAL
               value: "3600"
             - name: REDIS_URL
-              value: rediss://10.102.0.11:6378
+              value: redis://clinq-cache-redis-master.redis.svc.cluster.local
             - name: USE_MEMORY_CACHE
               value: "true"
             - name: APP_WEB_URL
@@ -61,4 +61,4 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: $APP
-                  key: client-secret
+                  key: clientSecret

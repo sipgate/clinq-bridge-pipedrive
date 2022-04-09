@@ -30,7 +30,7 @@
 		"express": "^4.17.1",
 		"google-libphonenumber": "^3.2.6",
 		"husky": "^7.0.2",
-		"moment": "^2.24.0",
+		"moment": "^2.29.2",
 		"pipedrive": "^8.0.0"
 	},
 	"devDependencies": {

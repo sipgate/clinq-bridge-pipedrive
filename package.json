@@ -27,7 +27,7 @@
 		"@clinq/bridge": "^11.8.1",
 		"axios": "^0.19.2",
 		"env-cmd": "^10.1.0",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"google-libphonenumber": "^3.2.6",
 		"husky": "^7.0.2",
 		"moment": "^2.24.0",
